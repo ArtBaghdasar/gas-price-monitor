@@ -1,0 +1,13 @@
+providers:
+  - {name: "ВСК Газ", key: vsk, url: "https://vsk-gaz.ru/zapravka-gazgoldera", enabled: false, status: research}
+  - {name: "СК-Газ", key: ck_gaz, url: "https://zapravka-gazgoldera.ck-gaz.ru/", enabled: true, status: implemented}
+  - {name: "СибГаз", key: sib_gas, url: "https://sib-gas.ru/product/tekhnicheskie-gazy/zapravka-gazgoldera/filter/clear/apply/", enabled: false, status: research}
+  - {name: "ЗаправкаГаз", key: zapravkagaz, url: "https://zapravkagaz.ru/#calculator", enabled: false, status: research}
+  - {name: "iGAS", key: igas, url: "https://igas.su/", enabled: false, status: research}
+  - {name: "Блик Газ", key: blik, url: "https://blik-gas.ru/", enabled: false, status: research}
+  - {name: "МосРегионГаз", key: mosreggaz, url: "https://mosreggaz.ru/", enabled: false, status: research}
+  - {name: "BestГаз", key: bestgaz, url: "https://zaprawkagazgoldera.ru/", enabled: false, status: research}
+  - {name: "GasLPG", key: gaslpg, url: "https://gas-lpg.ru/", enabled: false, status: research}
+  - {name: "Доставим Газ", key: dostavimgaz, url: "https://dostavimgaz.ru/", enabled: false, status: research}
+  - {name: "VERVEX", key: vervex, url: "https://msk.vervex.ru/l/nao/kommunarka/", enabled: false, status: research}
+  - {name: "Быстрый Газ", key: bistrogaz, url: "https://bistrogaz.ru/", enabled: false, status: research}
