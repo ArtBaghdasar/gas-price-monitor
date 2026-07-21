@@ -4,7 +4,6 @@ import asyncio
 import logging
 import os
 from datetime import time
-from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
@@ -18,24 +17,44 @@ from telegram.ext import (
 )
 
 from config.settings import PARAMS
-from core.report import build_report
+from core.report import build_report, money
 from core.runner import run_all
+from providers.base import PriceResult
 from storage import Database
 
 LOGGER = logging.getLogger(__name__)
 TZ = ZoneInfo(os.getenv("BOT_TIMEZONE", "Europe/Moscow"))
 
 
-def keyboard() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
+def control_keyboard() -> list[list[InlineKeyboardButton]]:
+    return [
+        [InlineKeyboardButton("🔄 Проверить цены", callback_data="prices")],
         [
-            [InlineKeyboardButton("🔄 Проверить цены", callback_data="prices")],
-            [
-                InlineKeyboardButton("⚙️ Параметры", callback_data="settings"),
-                InlineKeyboardButton("🔕 Отключить отчёт", callback_data="unsubscribe"),
-            ],
-        ]
-    )
+            InlineKeyboardButton("⚙️ Параметры", callback_data="settings"),
+            InlineKeyboardButton("🔕 Отключить отчёт", callback_data="unsubscribe"),
+        ],
+    ]
+
+
+def keyboard(results: list[PriceResult] | None = None) -> InlineKeyboardMarkup:
+    rows: list[list[InlineKeyboardButton]] = []
+
+    if results:
+        available = sorted(
+            (r for r in results if r.status == "ok" and r.price_per_liter is not None),
+            key=lambda r: r.price_per_liter,
+        )
+        unavailable = [r for r in results if r.status != "ok" or r.price_per_liter is None]
+
+        for result in available:
+            label = f"🌐 {result.supplier} — {money(result.price_per_liter, ' ₽/л')}"
+            rows.append([InlineKeyboardButton(label[:64], url=result.url)])
+
+        for result in unavailable:
+            rows.append([InlineKeyboardButton(f"🌐 {result.supplier}"[:64], url=result.url)])
+
+    rows.extend(control_keyboard())
+    return InlineKeyboardMarkup(rows)
 
 
 def settings_text() -> str:
@@ -49,11 +68,11 @@ def settings_text() -> str:
     ).replace(",", " ")
 
 
-async def collect_and_format(db: Database) -> str:
+async def collect_and_format(db: Database) -> tuple[str, list[PriceResult]]:
     previous = db.previous_prices()
     results = await asyncio.to_thread(run_all, PARAMS)
     db.save_results(results)
-    return build_report(results, previous_prices=previous)
+    return build_report(results, previous_prices=previous), results
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -78,8 +97,8 @@ async def prices(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
     waiting = await message.reply_text("Проверяю открытые цены поставщиков…")
     db: Database = context.application.bot_data["db"]
-    report = await collect_and_format(db)
-    await waiting.edit_text(report, reply_markup=keyboard())
+    report, results = await collect_and_format(db)
+    await waiting.edit_text(report, reply_markup=keyboard(results))
 
 
 async def settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -107,8 +126,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if query.data == "prices":
         await query.edit_message_text("Проверяю открытые цены поставщиков…")
         db: Database = context.application.bot_data["db"]
-        report = await collect_and_format(db)
-        await query.edit_message_text(report, reply_markup=keyboard())
+        report, results = await collect_and_format(db)
+        await query.edit_message_text(report, reply_markup=keyboard(results))
     elif query.data == "settings":
         await query.edit_message_text(
             settings_text(), parse_mode=ParseMode.HTML, reply_markup=keyboard()
@@ -124,10 +143,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def daily_report(context: ContextTypes.DEFAULT_TYPE) -> None:
     db: Database = context.application.bot_data["db"]
-    report = await collect_and_format(db)
+    report, results = await collect_and_format(db)
     for chat_id in db.subscribers():
         try:
-            await context.bot.send_message(chat_id=chat_id, text=report, reply_markup=keyboard())
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=report,
+                reply_markup=keyboard(results),
+            )
         except Exception:
             LOGGER.exception("Не удалось отправить отчёт в чат %s", chat_id)
 
