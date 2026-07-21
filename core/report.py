@@ -37,7 +37,11 @@ def build_report(
     )
     unavailable = [r for r in results if r.status != "ok"]
 
-    lines = [f"Стоимость газа на {report_date:%d.%m.%Y}", ""]
+    lines = [
+        f"Стоимость газа на {report_date:%d.%m.%Y}",
+        f"Проверено поставщиков: {len(results)}",
+        "",
+    ]
     for index, result in enumerate(available, start=1):
         assert result.price_per_liter is not None
         lines.extend(
