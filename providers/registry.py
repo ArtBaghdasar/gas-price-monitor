@@ -69,4 +69,68 @@ def build_providers():
             name="Быстрый Газ",
             url="https://bistrogaz.ru/",
         )),
+        PublicPageProvider(PublicPageConfig(
+            name="GasRegion",
+            url="https://gasregion.su/zapravka-gazgolderov-gazom/",
+            preferred_patterns=(
+                r"(\d{1,3}(?:[.,]\d{1,2})?)\s*руб(?:\.|лей)?\s*за\s*1\s*литр",
+                r"цена\s+на\s+газ.*?(\d{1,3}(?:[.,]\d{1,2})?)\s*руб",
+            ),
+            note="Публичная цена с доставкой по Москве и Московской области",
+        )),
+        PublicPageProvider(PublicPageConfig(
+            name="РосАвтономГаз",
+            url="https://www.rosavtonomgaz.ru/gaz-propan-butan/zapravka-gazgoldera/",
+            preferred_patterns=(
+                r"цена\s+за\s+литр.*?(\d{1,3}(?:[.,]\d{1,2})?)\s*(?:₽|руб)",
+                r"(\d{1,3}(?:[.,]\d{1,2})?)\s*(?:₽|руб)\s*(?:/|за)\s*(?:литр|л)",
+            ),
+            note="Цена из публичной страницы или калькулятора; при отсутствии значения требуется уточнение",
+        )),
+        PublicPageProvider(PublicPageConfig(
+            name="Сириус Ойл",
+            url="https://oil-sirius.ru/",
+            preferred_patterns=(
+                r"цена\s+газа\s+на\s+сегодня\s*(\d{1,3}(?:[.,]\d{1,2})?)",
+                r"пропан.*?(\d{1,3}(?:[.,]\d{1,2})?)\s*руб\s*/\s*литр",
+            ),
+            note="Публичная цена пропана для газгольдера",
+        )),
+        PublicPageProvider(PublicPageConfig(
+            name="Астин-групп",
+            url="https://astin-ltd.ru/zapravka-gazgoldera/",
+            preferred_patterns=(
+                r"по\s+цене\s+от\s*(\d{1,3}(?:[.,]\d{1,2})?)\s*руб(?:лей)?\s+за\s+литр",
+            ),
+            note="Публичная цена «от» по Московской области",
+        )),
+        PublicPageProvider(PublicPageConfig(
+            name="Отличный газ",
+            url="https://finegaz.ru/dostavka-gaza/zapravka-gazgoldera/",
+            preferred_patterns=(
+                r"цена\s+от\s*(\d{1,3}(?:[.,]\d{1,2})?)\s*руб\.?\s*/\s*литр",
+                r"стоимость\s+газа\s+с\s+доставкой\s+от\s*(\d{1,3}(?:[.,]\d{1,2})?)\s*руб",
+            ),
+            note="Публичная цена «от» с доставкой",
+        )),
+        PublicPageProvider(PublicPageConfig(
+            name="МрГаз",
+            url="https://mrgaz.ru/",
+            page_url="https://mrgaz.ru/",
+            preferred_patterns=(
+                r"специальной\s+цене\s*(\d{1,3}(?:[.,]\d{1,2})?)\s*руб\s*литр",
+                r"цене\s*(\d{1,3}(?:[.,]\d{1,2})?)\s*руб\s*/?\s*литр",
+            ),
+            note="Публичная акционная цена; срок акции указан на сайте",
+        )),
+        PublicPageProvider(PublicPageConfig(
+            name="АБАС",
+            url="https://msk-toplivo.ru/uslugi/dostavka-gaza-dlia-zapravki-gazgolderov/",
+            minimum_volume_liters=2000,
+            preferred_patterns=(
+                r"минимальный\s+заказ.*?от\s*(\d{1,3}(?:[.,]\d{1,2})?)\s*руб\.?\s*/\s*литр",
+                r"от\s*(\d{1,3}(?:[.,]\d{1,2})?)\s*руб\.?\s*/\s*литр",
+            ),
+            note="Публичная цена «от», минимальный заказ 2 000 л",
+        )),
     ]
