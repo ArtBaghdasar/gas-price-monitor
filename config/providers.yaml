@@ -11,3 +11,11 @@ providers:
   - {name: "Доставим Газ", key: dostavimgaz, url: "https://dostavimgaz.ru/", enabled: true, status: research}
   - {name: "VERVEX", key: vervex, url: "https://msk.vervex.ru/l/nao/kommunarka/", enabled: true, status: research}
   - {name: "Быстрый Газ", key: bistrogaz, url: "https://bistrogaz.ru/", enabled: true, status: research}
+
+  - {name: "GasRegion", key: gasregion, url: "https://gasregion.su/zapravka-gazgolderov-gazom/", enabled: true, status: implemented}
+  - {name: "РосАвтономГаз", key: rosavtonomgaz, url: "https://www.rosavtonomgaz.ru/gaz-propan-butan/zapravka-gazgoldera/", enabled: true, status: implemented}
+  - {name: "Сириус Ойл", key: sirius_oil, url: "https://oil-sirius.ru/", enabled: true, status: implemented}
+  - {name: "Астин-групп", key: astin, url: "https://astin-ltd.ru/zapravka-gazgoldera/", enabled: true, status: implemented}
+  - {name: "Отличный газ", key: finegaz, url: "https://finegaz.ru/dostavka-gaza/zapravka-gazgoldera/", enabled: true, status: implemented}
+  - {name: "МрГаз", key: mrgaz, url: "https://mrgaz.ru/", enabled: true, status: implemented}
+  - {name: "АБАС", key: abas, url: "https://msk-toplivo.ru/uslugi/dostavka-gaza-dlia-zapravki-gazgolderov/", enabled: true, status: implemented}
