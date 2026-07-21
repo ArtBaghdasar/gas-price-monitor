@@ -52,7 +52,8 @@ def build_report(
 
     if unavailable:
         for result in unavailable:
-            lines.extend([f"⚠️ {result.supplier}", "   Цена недоступна", ""])
+            detail = f" — {result.note}" if result.note else ""
+            lines.extend([f"⚠️ {result.supplier}", f"   Цена недоступна{detail}", ""])
 
     if available:
         best = available[0]
